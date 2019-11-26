@@ -15,7 +15,8 @@ class Assembler {
     void readfile();
 	void readCommand(string);
 	int activeLine;
-	string binaryArray[70][32];
+	char binaryArray[32][32];
+	void intToBinary(int);
 };
 
 void Assembler::readfile(){
@@ -64,38 +65,52 @@ void Assembler::readfile(){
 	file.close();
 }
 
-void Assembler::readCommand(string machineCode){
+void Assembler::intToBinary(int number){
 	string binaryLine = "00000000000000000000000000000000";
 	int remainder;
+	// to find the operand, we first find the command, then add 4
+	// to find the first number in the operand
+	for (int i = 31 ; i >= 0 ; i--){
+		if (number >= pow(2,i)){
+			binaryLine[i] = '1';
+			number -= pow(2,i);
+		}
+		else{
+			binaryLine[i] = '0';
+		}
+	}
+	cout << binaryLine << endl;
+}
+
+void Assembler::readCommand(string machineCode){
 	string stringNumber;
-	int number = 0;
-	// if the command "VAR" is in the line of machine code...
+	int position = 4;
+	string operand;
 	if (machineCode.find("VAR") != string::npos){
-		// to find the operand, we first find the command, then add 4
-		// to find the first number in the operand
 		machineCode.erase(0,machineCode.find("VAR"));
 		cout << machineCode << endl;
-		int position = 4;
 		while (machineCode[position] != ' '){
 			stringNumber += machineCode[position];
 			position++;
 		}
 		// now we have the operand, convert it to an integer
 		int number = stoi(stringNumber);
-		for (int i = 31 ; i >= 0 ; i--){
-			if (number >= pow(2,i)){
-				binaryLine[i] = '1';
-				number -= pow(2,i);
-			}
-			else{
-				binaryLine[i] = '0';
-			}
+		intToBinary(number);
+	}
+	else if(machineCode.find("LDN") != string::npos){
+		operand = "101";
+		machineCode.erase(0,machineCode.find("LDN"));
+		cout << machineCode << endl;
+		while (machineCode[position] != ' '){
+			stringNumber += machineCode[position];
+			position++;
 		}
-		cout << binaryLine << endl;
+
 	}
 	else{
 		return;
 	}
+	
 }
 
 #endif
