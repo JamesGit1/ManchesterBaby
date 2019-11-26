@@ -12,7 +12,7 @@ class Assembler {
     public:
     string filename;
     void readfile();
-	void readCommand();
+	void readCommand(string);
 	int activeLine;
 };
 
@@ -52,7 +52,9 @@ void Assembler::readfile(){
                 }
             }
 			if (temp.compare("") != 0){
+				// temp.erase(0,10);
 				cout << temp << endl;
+				readCommand(temp);
 			}
 			activeLine++;
 		}
@@ -64,24 +66,27 @@ void Assembler::readfile(){
 void readCommand(string machineCode){
 	string binaryLine = "00000000000000000000000000000000";
 	int remainder;
-	int power;
 	string stringNumber;
 	int number;
 	// if the command "VAR" is in the line of machine code...
 	if (machineCode.find("VAR") != string::npos){
 		// to find the operand, we first find the command, then add 4
 		// to find the first number in the operand
-		int position = machineCode.find("VAR") + 4;
+		int position = 4;
+		cout << position << endl;
 		while (machineCode[position] != ' '){
 			stringNumber += machineCode[position];
 		}
+		cout << stringNumber << endl;
 		// now we have the operand, convert it to an integer
 		int number = stoi(stringNumber);
-		power = 1;
-		while (remainder != 0){
-			remainder = number % power;
-			power *= 2;
+		for (int i = 31 ; i >= 0 ; i--){
+			if (number >= 2^(i)){
+				binaryLine[i] = 1;
+				number -= 2^(i);
+			}
 		}
+		cout << binaryLine << endl;
 	}
 }
 
