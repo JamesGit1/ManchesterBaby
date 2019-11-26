@@ -60,16 +60,18 @@ void expandBabyHardware()
 	int j=0;
 	//int arrayLen=32;
 
-	cout<<"Please enter how big you want your new baby to be (bigger than 32):\n";
+	cout<<"Please enter how big you want your new baby to be (bigger than 32 and no greater than 8192):\n";
 	cin>> j;
 
-	while(j<=32)
+	while(j<=32 || j>8192)
 	{
-		cout<<"Please enter a new integer value (bigger than 32):\n";
+		cout<<"Please enter a new integer value (bigger than 32 and no greater than 8192):\n";
 		cin>> j;
 	}
 
 		arrayLen= j;
 
 }
+
+
 
