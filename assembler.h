@@ -5,6 +5,7 @@
 #include <istream>
 #include <iostream>
 #include <fstream>
+#include<cmath>
 
 using namespace std;
 
@@ -14,6 +15,7 @@ class Assembler {
     void readfile();
 	void readCommand(string);
 	int activeLine;
+	string binaryArray[70][32];
 };
 
 void Assembler::readfile(){
@@ -53,7 +55,6 @@ void Assembler::readfile(){
             }
 			if (temp.compare("") != 0){
 				// temp.erase(0,10);
-				cout << temp << endl;
 				readCommand(temp);
 			}
 			activeLine++;
@@ -63,30 +64,37 @@ void Assembler::readfile(){
 	file.close();
 }
 
-void readCommand(string machineCode){
+void Assembler::readCommand(string machineCode){
 	string binaryLine = "00000000000000000000000000000000";
 	int remainder;
 	string stringNumber;
-	int number;
+	int number = 0;
 	// if the command "VAR" is in the line of machine code...
 	if (machineCode.find("VAR") != string::npos){
 		// to find the operand, we first find the command, then add 4
 		// to find the first number in the operand
+		machineCode.erase(0,machineCode.find("VAR"));
+		cout << machineCode << endl;
 		int position = 4;
-		cout << position << endl;
 		while (machineCode[position] != ' '){
 			stringNumber += machineCode[position];
+			position++;
 		}
-		cout << stringNumber << endl;
 		// now we have the operand, convert it to an integer
 		int number = stoi(stringNumber);
 		for (int i = 31 ; i >= 0 ; i--){
-			if (number >= 2^(i)){
-				binaryLine[i] = 1;
-				number -= 2^(i);
+			if (number >= pow(2,i)){
+				binaryLine[i] = '1';
+				number -= pow(2,i);
+			}
+			else{
+				binaryLine[i] = '0';
 			}
 		}
 		cout << binaryLine << endl;
+	}
+	else{
+		return;
 	}
 }
 
