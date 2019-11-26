@@ -67,14 +67,20 @@ void readCommand(string machineCode){
 	int power;
 	string stringNumber;
 	int number;
+	// if the command "VAR" is in the line of machine code...
 	if (machineCode.find("VAR") != string::npos){
+		// to find the operand, we first find the command, then add 4
+		// to find the first number in the operand
 		int position = machineCode.find("VAR") + 4;
 		while (machineCode[position] != ' '){
 			stringNumber += machineCode[position];
 		}
+		// now we have the operand, convert it to an integer
 		int number = stoi(stringNumber);
+		power = 1;
 		while (remainder != 0){
-			remainder = machineCode % power;
+			remainder = number % power;
+			power *= 2;
 		}
 	}
 }
