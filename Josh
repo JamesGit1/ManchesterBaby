@@ -1,6 +1,10 @@
 #include <iostream>
 using namespace std;
 
+
+void expandBabyHardware();
+
+
 int main(void)
 {
 	char selection;
@@ -35,6 +39,7 @@ cout<<"╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚
 		break;
 
 		case '3' :{cout<<"\nOption 3 selected: Expanding Baby Hardware...\n";}
+		expandBabyHardware();
 		break;
 
 		case '0' :{cout<<"\nGoodbye!\n";}
@@ -46,6 +51,25 @@ cout<<"╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚
 	cout<<"\n";
 
 	return 0;
+
+}
+
+void expandBabyHardware()
+{
+
+	int j=0;
+	//int arrayLen=32;
+
+	cout<<"Please enter how big you want your new baby to be (bigger than 32):\n";
+	cin>> j;
+
+	while(j<=32)
+	{
+		cout<<"Please enter a new integer value (bigger than 32):\n";
+		cin>> j;
+	}
+
+		arrayLen= j;
 
 }
 
