@@ -35,7 +35,11 @@ void Assembler::readfile(){
 		// get the lines of text from the file
 		while(getline(file, temp)){
 			// do something with the file
-            cout << temp << endl;
+            for(int i = 0 ; i < temp.length() ; i++){
+                if (temp[i] == ";"){
+                    return;
+                }
+            }
 		}
 	}
 	// close the file
