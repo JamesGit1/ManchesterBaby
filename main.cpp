@@ -10,13 +10,15 @@
 using namespace std;
 
 class Baby {
-  int store[32][32];			// The machine code input from file
+
+  int store[8191][32];			//  8191 is max with space The machine code input from file
   int accumulator[32];			// Result of arithmetic operations
   int controlInstruction[32];	// ie Program Counter, typically instruciton address
   int presentInstruction[32];
   int counter;
   bool stop;
   int opInt;
+  int arrayLen;
 
 public:
 	Baby(); //Constructor
@@ -46,10 +48,15 @@ public:
 Baby::Baby(){
 	counter=0;
 	stop=false;
+	arrayLen = 10;
+
+	for (int i = 0; i < 32; ++i){
+		controlInstruction[i]=0;
+	}
 }
 
 void Baby::printArray(){
-	for (int x = 0; x < 10; ++x){
+	for (int x = 0; x < arrayLen; ++x){
 		cout<<x<<"| ";
 		for (int y = 0; y < 32; ++y){
 			printf("%d", store[x][y]);
@@ -70,7 +77,7 @@ void Baby::JRP(){
 	cout<<"| JRP INSTRUCTION | ADDING CONTENT OF STORE TO CI | STORE LOCATION "<<opInt<<endl;
 
 	bool carry=false;
-	for (int y = 0; y < 31; ++y){
+	for (int y = 0; y < 32; ++y){
 		if(controlInstruction[y]==1 && store[opInt][y]==1 && carry==true){
 			carry=true;
 			controlInstruction[y]=1;
@@ -146,20 +153,22 @@ void Baby::SUB(){
 			negitiveStore[i]=0;
 		}
 	}
+	bool carry = true;
 	int pos=0;
-	do{
-		if(negitiveStore[pos]==0){
-			negitiveStore[pos]=1;
+	while(carry){
+		if(negitiveStore[pos]==1){
+			carry=true;
+			negitiveStore[pos]=0;
 		}
+		else{
+			negitiveStore[pos]=1;
+			carry=false;
+		}	
 		pos++;
-	}while(negitiveStore[pos]==1);
-
-	for (int i = 0; i < pos; ++i){
-		negitiveStore[pos]=0;
 	}
 
-	bool carry=false;
-	for (int y = 0; y < 31; ++y){
+	carry=false;
+	for (int y = 0; y < 32; ++y){
 		if(accumulator[y]==1 && negitiveStore[y]==1 && carry==true){
 			carry=true;
 			accumulator[y]=1;
@@ -201,6 +210,7 @@ void Baby::STP(){
 
 void Baby::getFileIn(){
 	string filename = "BabyTest1-MC.txt";
+	//string filename = "tester.txt";
 
     //READ IN FILE
     string line;
@@ -228,25 +238,22 @@ void Baby::getFileIn(){
 }
 
 void Baby::increaseCounter(){
-	counter++;
-	/*
-	int current = controlInstruction[31];
-	int prev = controlInstruction[1];
-	int currentPos=0;
-	int nextPos=0;
+	bool carry = true;
+	int pos=0;
 
-	while(current==0){
-		currentPos--;
-	}
-	for (int i = 0; i <= currentPos+1; ++i){
-		if(controlInstruction[i]==0){
-			controlInstruction[i]=1;
-			for (int x = 0; x < (currentPos-1); ++x){
-				controlInstruction[x]=0;
-			}
+	while(carry){
+		if(controlInstruction[pos]==1){
+			carry=true;
+			controlInstruction[pos]=0;
 		}
+		else{
+			controlInstruction[pos]=1;
+			carry=false;
+		}	
+		pos++;
 	}
-	*/
+
+	counter=binToInt(controlInstruction);
 }
 
 void Baby::fetch(){
@@ -268,10 +275,10 @@ int Baby::binToInt(int arrayIn[32]){
 	return intOut;
 }
 
-void Baby::opcodeInt(int *openrand){
+void Baby::opcodeInt(int *operand){
 	int power=1;
-	for (int i=0; i < 5; ++i){
-		if(openrand[i]==1){
+	for (int i=0; i < 13; ++i){
+		if(operand[i]==1){
 			opInt+=power;
 		}
 		power=power*2;
@@ -279,18 +286,18 @@ void Baby::opcodeInt(int *openrand){
 }
 
 void Baby::decodeOperate(){
-	int openrand[5] = {0};
+	int operand[13] = {0};
 	int functionNumber[3] = {0};
 
-	for (int i = 0; i < 5; ++i){
-		openrand[i] = presentInstruction[i];
+	for (int i = 0; i < 13; ++i){
+		operand[i] = presentInstruction[i];
 		if(i < 3){
 			functionNumber[i] = presentInstruction[i+13];
 		}
 	}
 
 	opInt=0;
-	opcodeInt(openrand);
+	opcodeInt(operand);
 
 	//Instruction Sets
 	if(functionNumber[0]==0 && functionNumber[1]==0 && functionNumber[2]==0){
@@ -321,7 +328,11 @@ void Baby::decodeOperate(){
 
 void Baby::printValues(){
 	if(counter>0){
-		cout<<"| COUNT: "<<counter;
+		cout<<"| CONTROL INSTRUCTION: ";
+		for (int x = 0; x < 32; ++x){
+			printf("%d", controlInstruction[x]);
+		}
+		cout<<" | COUNT: "<<counter;
 		cout<<endl<<"| ACCUMULATOR VALUE ";
 		for (int x = 0; x < 32; ++x){
 			printf("%d", accumulator[x]);
