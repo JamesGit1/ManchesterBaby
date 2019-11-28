@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <vector>
 
 using namespace std;
 
@@ -85,9 +86,16 @@ void Assembler::intToBinary(int number){
 	}
 }
 
-void Assembler::readCommand(string machineCode){
-	string stringNumber;
-	int position = 4;
+struct variable{
+	string name;
+	vector <int> usedInLine;
+	int definedOnLine;
+	int value;
+};
+
+void Assembler::readCommand(string machineCode){vector<int> g1; 
+	string stringNumber;vector<int> g1; 
+	int position = 4;vector<int> g1; 
 	string operand;
 	if (machineCode.find("VAR") != string::npos){
 		machineCode.erase(0,machineCode.find("VAR"));
