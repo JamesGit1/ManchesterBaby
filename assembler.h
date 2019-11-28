@@ -17,7 +17,9 @@ class Assembler {
 	void readCommand(string);
 	int activeLine;
 	char binaryArray[32][32];
-	void intToBinary(int);
+	void intToBinary(int, int);
+	vector <variable> variableArray;
+	int numberOfVariables;
 };
 
 void Assembler::readfile(){
@@ -66,7 +68,7 @@ void Assembler::readfile(){
 	file.close();
 }
 
-void Assembler::intToBinary(int number){
+void Assembler::intToBinary(int number, int variableNumber){
 	string binaryLine = "00000000000000000000000000000000";
 	int remainder;
 	// to find the operand, we first find the command, then add 4
@@ -90,23 +92,27 @@ struct variable{
 	string name;
 	vector <int> usedInLine;
 	int definedOnLine;
-	int value;
+	string value;
 };
 
-void Assembler::readCommand(string machineCode){vector<int> g1; 
-	string stringNumber;vector<int> g1; 
-	int position = 4;vector<int> g1; 
+void Assembler::readCommand(string machineCode){
+	string stringNumber;
+	int position = 0;
 	string operand;
 	if (machineCode.find("VAR") != string::npos){
+		while(machineCode[position] != ':' && machineCode[position] == ' '){
+			variableArray.at(numberOfVariables).name += machineCode[position];
+		}
 		machineCode.erase(0,machineCode.find("VAR"));
 		cout << machineCode << endl;
+		position = 4;
 		while (machineCode[position] != ' '){
 			stringNumber += machineCode[position];
 			position++;
 		}
 		// now we have the operand, convert it to an integer
 		int number = stoi(stringNumber);
-		intToBinary(number);
+		intToBinary(number, numberOfVariables);
 	}
 	else if(machineCode.find("LDN") != string::npos){
 		operand = "010";
