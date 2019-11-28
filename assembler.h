@@ -5,7 +5,7 @@
 #include <istream>
 #include <iostream>
 #include <fstream>
-#include<cmath>
+#include <cmath>
 
 using namespace std;
 
@@ -80,6 +80,9 @@ void Assembler::intToBinary(int number){
 		}
 	}
 	cout << binaryLine << endl;
+	for(int i = 0 ; i < 32 ; i++){
+		binaryArray[activeLine][i] = binaryLine[i];
+	}
 }
 
 void Assembler::readCommand(string machineCode){
@@ -98,14 +101,67 @@ void Assembler::readCommand(string machineCode){
 		intToBinary(number);
 	}
 	else if(machineCode.find("LDN") != string::npos){
-		operand = "101";
+		operand = "010";
 		machineCode.erase(0,machineCode.find("LDN"));
 		cout << machineCode << endl;
 		while (machineCode[position] != ' '){
 			stringNumber += machineCode[position];
 			position++;
 		}
-
+	}
+	else if(machineCode.find("STO") != string::npos){
+		operand = "110";
+		machineCode.erase(0,machineCode.find("LDN"));
+		cout << machineCode << endl;
+		while (machineCode[position] != ' '){
+			stringNumber += machineCode[position];
+			position++;
+		}
+	}
+	else if(machineCode.find("JRP") != string::npos){
+		operand = "100";
+		machineCode.erase(0,machineCode.find("LDN"));
+		cout << machineCode << endl;
+		while (machineCode[position] != ' '){
+			stringNumber += machineCode[position];
+			position++;
+		}
+	}
+	else if(machineCode.find("STP") != string::npos){
+		operand = "111";
+		machineCode.erase(0,machineCode.find("LDN"));
+		cout << machineCode << endl;
+		while (machineCode[position] != ' '){
+			stringNumber += machineCode[position];
+			position++;
+		}
+	}
+	else if(machineCode.find("SUB") != string::npos){
+		operand = "001";
+		machineCode.erase(0,machineCode.find("LDN"));
+		cout << machineCode << endl;
+		while (machineCode[position] != ' '){
+			stringNumber += machineCode[position];
+			position++;
+		}
+	}
+	else if(machineCode.find("CMP") != string::npos){
+		operand = "011";
+		machineCode.erase(0,machineCode.find("LDN"));
+		cout << machineCode << endl;
+		while (machineCode[position] != ' '){
+			stringNumber += machineCode[position];
+			position++;
+		}
+	}
+	else if(machineCode.find("JMP") != string::npos){
+		operand = "000";
+		machineCode.erase(0,machineCode.find("LDN"));
+		cout << machineCode << endl;
+		while (machineCode[position] != ' '){
+			stringNumber += machineCode[position];
+			position++;
+		}
 	}
 	else{
 		return;
