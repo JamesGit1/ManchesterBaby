@@ -77,9 +77,17 @@ void Assembler::readfile(){
 			if (temp.compare("") != 0){
 				// temp.erase(0,10);
 				totalNoOfLines++;
-				// readCommand(temp);
+				readCommand(temp);
 			}
 			activeLine++;
+		}
+		cout << "There are " << variableArray.size() << " variables" << endl;
+		for(int i = 0 ; i < variableArray.size() ; i++){
+			cout << variableArray.at(i).name << " was found on lines ";
+			for (int c = 0 ; c < variableArray.at(i).usedInLine.size() ; c++){
+				cout << variableArray.at(i).usedInLine.at(c) << " ";
+			}
+			cout << endl;
 		}
 	}
 	// close the file
@@ -108,13 +116,12 @@ void Assembler::intToBinary(string variableName, int number){
 	}
 
 	// find the variable and add the value to it
-	for (int i = 0 ; i < numberOfVariables ; i++){
+	for (int i = 0 ; i < variableArray.size() ; i++){
 		if(variableArray.at(i).name == variableName){
 			variableArray.at(i).value = binaryLine;
 			break;
 		}
 	}
-	
 }
 
 void Assembler::readCommand(string machineCode){
@@ -123,11 +130,13 @@ void Assembler::readCommand(string machineCode){
 	int position = 0;
 	string operand;
 	string variableName;
+	string binaryLine = "00000000000000000000000000000000";
 
 	if (machineCode.find("VAR") != string::npos){
 
 		while(machineCode[position] != ':' && machineCode[position] == ' '){
 			variableName += machineCode[position];
+			position++;
 		}
 
 		// variableArray.at(numberOfVariables).definedOnLine = activeLine;
@@ -144,7 +153,7 @@ void Assembler::readCommand(string machineCode){
 		int number = stoi(stringNumber);
 		intToBinary(variableName, number);
 
-		for (int i = 0 ; i < numberOfVariables ; i++){
+		for (int i = 0 ; i < variableArray.size() ; i++){
 			if(variableArray.at(i).name == variableName){
 				variableArray.at(i).definedOnLine = activeLine;
 				break;
@@ -155,64 +164,170 @@ void Assembler::readCommand(string machineCode){
 		operand = "010";
 		machineCode.erase(0,machineCode.find("LDN"));
 		cout << machineCode << endl;
+		position = 4;
 		while (machineCode[position] != ' '){
-			stringNumber += machineCode[position];
+			variableName += machineCode[position];
 			position++;
 		}
+		for (int i = 0 ; i < variableArray.size() ; i++){
+			if(variableArray.at(i).name == variableName){
+				variableArray.at(i).usedInLine.push_back(activeLine);
+				break;
+			}
+			if(i == variableArray.size()-1){
+				variable temp;
+				temp.name = variableName;
+				temp.usedInLine.push_back(activeLine);
+				variableArray.push_back(temp);
+			}
+		}
+		// TODO correct value of binary line.
+		binaryLine = "00000000001000000000000000000000";
+
 	}
 	else if(machineCode.find("STO") != string::npos){
 		operand = "110";
-		machineCode.erase(0,machineCode.find("LDN"));
+		machineCode.erase(0,machineCode.find("STO"));
 		cout << machineCode << endl;
+		position = 4;
 		while (machineCode[position] != ' '){
-			stringNumber += machineCode[position];
+			variableName += machineCode[position];
 			position++;
 		}
+		for (int i = 0 ; i < variableArray.size() ; i++){
+			if(variableArray.at(i).name == variableName){
+				variableArray.at(i).usedInLine.push_back(activeLine);
+				break;
+			}
+			if(i == variableArray.size()-1){
+				variable temp;
+				temp.name = variableName;
+				temp.usedInLine.push_back(activeLine);
+				variableArray.push_back(temp);
+			}
+		}
+		// TODO correct value of binary line.
+		binaryLine = "00000000001000000000000000000000";
 	}
 	else if(machineCode.find("JRP") != string::npos){
 		operand = "100";
-		machineCode.erase(0,machineCode.find("LDN"));
+		machineCode.erase(0,machineCode.find("JRP"));
 		cout << machineCode << endl;
+		position = 4;
 		while (machineCode[position] != ' '){
-			stringNumber += machineCode[position];
+			variableName += machineCode[position];
 			position++;
 		}
+		for (int i = 0 ; i < variableArray.size() ; i++){
+			if(variableArray.at(i).name == variableName){
+				variableArray.at(i).usedInLine.push_back(activeLine);
+				break;
+			}
+			if(i == variableArray.size()-1){
+				variable temp;
+				temp.name = variableName;
+				temp.usedInLine.push_back(activeLine);
+				variableArray.push_back(temp);
+			}
+		}
+		// TODO correct value of binary line.
+		binaryLine = "00000000001000000000000000000000";
 	}
 	else if(machineCode.find("STP") != string::npos){
 		operand = "111";
-		machineCode.erase(0,machineCode.find("LDN"));
+		machineCode.erase(0,machineCode.find("STP"));
 		cout << machineCode << endl;
+		position = 4;
 		while (machineCode[position] != ' '){
-			stringNumber += machineCode[position];
+			variableName += machineCode[position];
 			position++;
 		}
+		for (int i = 0 ; i < variableArray.size() ; i++){
+			if(variableArray.at(i).name == variableName){
+				variableArray.at(i).usedInLine.push_back(activeLine);
+				break;
+			}
+			if(i == variableArray.size()-1){
+				variable temp;
+				temp.name = variableName;
+				temp.usedInLine.push_back(activeLine);
+				variableArray.push_back(temp);
+			}
+		}
+		// TODO correct value of binary line.
+		binaryLine = "00000000001000000000000000000000";
 	}
 	else if(machineCode.find("SUB") != string::npos){
 		operand = "001";
-		machineCode.erase(0,machineCode.find("LDN"));
+		machineCode.erase(0,machineCode.find("SUB"));
 		cout << machineCode << endl;
+		position = 4;
 		while (machineCode[position] != ' '){
-			stringNumber += machineCode[position];
+			variableName += machineCode[position];
 			position++;
 		}
+		for (int i = 0 ; i < variableArray.size() ; i++){
+			if(variableArray.at(i).name == variableName){
+				variableArray.at(i).usedInLine.push_back(activeLine);
+				break;
+			}
+			if(i == variableArray.size()-1){
+				variable temp;
+				temp.name = variableName;
+				temp.usedInLine.push_back(activeLine);
+				variableArray.push_back(temp);
+			}
+		}
+		// TODO correct value of binary line.
+		binaryLine = "00000000001000000000000000000000";
 	}
 	else if(machineCode.find("CMP") != string::npos){
 		operand = "011";
-		machineCode.erase(0,machineCode.find("LDN"));
+		machineCode.erase(0,machineCode.find("CMP"));
 		cout << machineCode << endl;
+		position = 4;
 		while (machineCode[position] != ' '){
-			stringNumber += machineCode[position];
+			variableName += machineCode[position];
 			position++;
 		}
+		for (int i = 0 ; i < variableArray.size() ; i++){
+			if(variableArray.at(i).name == variableName){
+				variableArray.at(i).usedInLine.push_back(activeLine);
+				break;
+			}
+			if(i == variableArray.size()-1){
+				variable temp;
+				temp.name = variableName;
+				temp.usedInLine.push_back(activeLine);
+				variableArray.push_back(temp);
+			}
+		}
+		// TODO correct value of binary line.
+		binaryLine = "00000000001000000000000000000000";
 	}
 	else if(machineCode.find("JMP") != string::npos){
 		operand = "000";
-		machineCode.erase(0,machineCode.find("LDN"));
+		machineCode.erase(0,machineCode.find("JMP"));
 		cout << machineCode << endl;
+		position = 4;
 		while (machineCode[position] != ' '){
-			stringNumber += machineCode[position];
+			variableName += machineCode[position];
 			position++;
 		}
+		for (int i = 0 ; i < variableArray.size() ; i++){
+			if(variableArray.at(i).name == variableName){
+				variableArray.at(i).usedInLine.push_back(activeLine);
+				break;
+			}
+			if(i == variableArray.size()-1){
+				variable temp;
+				temp.name = variableName;
+				temp.usedInLine.push_back(activeLine);
+				variableArray.push_back(temp);
+			}
+		}
+		// TODO correct value of binary line.
+		binaryLine = "00000000001000000000000000000000";
 	}
 	else{
 		return;
