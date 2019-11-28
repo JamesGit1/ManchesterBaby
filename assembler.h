@@ -17,13 +17,23 @@ class Assembler {
 	void readCommand(string);
 	int activeLine;
 	char binaryArray[32][32];
-	void intToBinary(int, int);
+	void intToBinary(string, int);
+	struct variable{
+		string name;
+		vector <int> usedInLine;
+		int definedOnLine;
+		string value;
+	};
 	vector <variable> variableArray;
 	int numberOfVariables;
+	int totalNoOfLines;
+	int startLine;
+	int endLine;
 };
 
 void Assembler::readfile(){
 	activeLine = 0;
+	totalNoOfLines = 0;
     filename = "BabyTest1-Assembler.txt";
     ifstream file;
 	string temp;
@@ -44,7 +54,7 @@ void Assembler::readfile(){
 	else{
 		// get the lines of text from the file
 		while(getline(file, temp)){
-			// do something with the file
+			// remove the commenting
             for(int i = 0 ; i < temp.length() ; i++){
                 if (temp[i] == ';'){
 					if (i==0){
@@ -57,9 +67,17 @@ void Assembler::readfile(){
 					}
                 }
             }
+			// find the start and end points
+			if(temp.find("START: ") != string::npos){
+				startLine = activeLine;
+			}
+			else if(temp.find("END: ") != string::npos){
+				endLine = activeLine;
+			}
 			if (temp.compare("") != 0){
 				// temp.erase(0,10);
-				readCommand(temp);
+				totalNoOfLines++;
+				// readCommand(temp);
 			}
 			activeLine++;
 		}
@@ -68,7 +86,7 @@ void Assembler::readfile(){
 	file.close();
 }
 
-void Assembler::intToBinary(int number, int variableNumber){
+void Assembler::intToBinary(string variableName, int number){
 	string binaryLine = "00000000000000000000000000000000";
 	int remainder;
 	// to find the operand, we first find the command, then add 4
@@ -82,37 +100,56 @@ void Assembler::intToBinary(int number, int variableNumber){
 			binaryLine[i] = '0';
 		}
 	}
-	cout << binaryLine << endl;
+	// cout << binaryLine << endl;
+
+	// copy the binary number into the active line
 	for(int i = 0 ; i < 32 ; i++){
 		binaryArray[activeLine][i] = binaryLine[i];
 	}
+
+	// find the variable and add the value to it
+	for (int i = 0 ; i < numberOfVariables ; i++){
+		if(variableArray.at(i).name == variableName){
+			variableArray.at(i).value = binaryLine;
+			break;
+		}
+	}
+	
 }
 
-struct variable{
-	string name;
-	vector <int> usedInLine;
-	int definedOnLine;
-	string value;
-};
-
 void Assembler::readCommand(string machineCode){
+
 	string stringNumber;
 	int position = 0;
 	string operand;
+	string variableName;
+
 	if (machineCode.find("VAR") != string::npos){
+
 		while(machineCode[position] != ':' && machineCode[position] == ' '){
-			variableArray.at(numberOfVariables).name += machineCode[position];
+			variableName += machineCode[position];
 		}
+
+		// variableArray.at(numberOfVariables).definedOnLine = activeLine;
 		machineCode.erase(0,machineCode.find("VAR"));
 		cout << machineCode << endl;
 		position = 4;
+
 		while (machineCode[position] != ' '){
 			stringNumber += machineCode[position];
 			position++;
 		}
+
 		// now we have the operand, convert it to an integer
 		int number = stoi(stringNumber);
-		intToBinary(number, numberOfVariables);
+		intToBinary(variableName, number);
+
+		for (int i = 0 ; i < numberOfVariables ; i++){
+			if(variableArray.at(i).name == variableName){
+				variableArray.at(i).definedOnLine = activeLine;
+				break;
+			}
+		}
 	}
 	else if(machineCode.find("LDN") != string::npos){
 		operand = "010";
