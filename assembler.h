@@ -94,7 +94,7 @@ void Assembler::readfile(){
 				activeLine++;
 			}
 		}
-		// placeValues();
+		placeValues();
 		printBinary();
 	}
 	// close the file
@@ -223,9 +223,9 @@ void Assembler::readCommand(string machineCode){
 	}
 	// copy the binary value into the active line
 	for(int i = 0 ; i < 32 ; i++){
-		if (i == 7,8,9){
-			binaryArray[activeLine][i] = operand[i-7];
-		}
+		if (i == 7 || i == 8 || i == 9){
+			binaryArray[activeLine][i] = operand[(i-7)];
+		} 
 		else{
 			binaryArray[activeLine][i] = '0';
 		}
@@ -251,13 +251,23 @@ void Assembler::placeValues(){
 }
 
 void Assembler::printBinary(){
-	for(int i = 0 ; i < 32 ; i++){
-		// This might have to change
-		for (int c = 0 ; c < 32 ; c++){
-			cout << binaryArray[i][c];
+	
+	ofstream myfile ("binary.txt");
+	if (myfile.is_open())
+	{
+		for(int i = 0 ; i < 32 ; i++){
+			// This might have to change
+			for (int c = 0 ; c < 32 ; c++){
+				myfile << binaryArray[i][c];
+			}
+			myfile << "\n";
 		}
-		cout << endl;
+		myfile.close();
 	}
+	else {
+		cout << "Unable to open file";
+	}
+	return;
 }
 
 #endif
