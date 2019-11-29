@@ -31,10 +31,9 @@ class Assembler {
 	int endLine;
 	void placeValues();
 	void printBinary();
-	// void initialiseBinaryArray();
+	void initialiseBinaryArray();
 };
 
-/*
 void Assembler::initialiseBinaryArray(){
 	for(int i = 0 ; i < 32 ; i++){
 		// This might have to change
@@ -43,7 +42,6 @@ void Assembler::initialiseBinaryArray(){
 		}
 	}
 }
-*/
 
 void Assembler::readfile(){
 	activeLine = 0;
@@ -52,7 +50,7 @@ void Assembler::readfile(){
     ifstream file;
 	string temp;
 	int restOfLine;
-	// initialiseBinaryArray();
+	initialiseBinaryArray();
 	try{
 		// open the file
 		file.open(filename);
@@ -96,7 +94,7 @@ void Assembler::readfile(){
 				activeLine++;
 			}
 		}
-		placeValues();
+		// placeValues();
 		printBinary();
 	}
 	// close the file
