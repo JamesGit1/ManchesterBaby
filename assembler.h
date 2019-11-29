@@ -29,6 +29,7 @@ class Assembler {
 	int totalNoOfLines;
 	int startLine;
 	int endLine;
+	void placeValues();
 };
 
 void Assembler::readfile(){
@@ -81,13 +82,9 @@ void Assembler::readfile(){
 				activeLine++;
 			}
 		}
-		cout << "There are " << variableArray.size() << " variables" << endl;
 		for(int i = 0 ; i < variableArray.size() ; i++){
-			cout << variableArray.at(i).name << " was found on lines ";
 			for (int c = 0 ; c < variableArray.at(i).usedInLine.size() ; c++){
-				cout << variableArray.at(i).usedInLine.at(c) << " ";
 			}
-			cout << endl;
 		}
 	}
 	// close the file
@@ -108,7 +105,6 @@ void Assembler::intToBinary(string variableName, int number){
 			binaryLine[i] = '0';
 		}
 	}
-	// cout << binaryLine << endl;
 
 	// copy the binary value into the active line
 	for(int i = 0 ; i < 32 ; i++){
@@ -135,7 +131,7 @@ void Assembler::readCommand(string machineCode){
 
 	if (machineCode.find("VAR") != string::npos){
 
-		while(machineCode[position] != ':' && machineCode[position] == ' '){
+		while(machineCode[position] != ':' && machineCode[position] != ' '){
 			variableName += machineCode[position];
 			position++;
 		}
@@ -157,7 +153,6 @@ void Assembler::readCommand(string machineCode){
 		for (int i = 0 ; i < variableArray.size() ; i++){
 			if(variableArray.at(i).name == variableName){
 				variableArray.at(i).definedOnLine = activeLine;
-				cout << variableName << " is defined on line " << activeLine << endl;
 				break;
 			}
 		}
@@ -332,9 +327,15 @@ void Assembler::readCommand(string machineCode){
 		return;
 	}
 	// copy the binary value into the active line
+	/*
 	for(int i = 0 ; i < 32 ; i++){
 		binaryArray[activeLine][i] = binaryLine[i];
 	}
+	*/
+}
+
+void Assembler::placeValues(){
+
 }
 
 #endif
