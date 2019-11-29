@@ -78,8 +78,8 @@ void Assembler::readfile(){
 				// temp.erase(0,10);
 				totalNoOfLines++;
 				readCommand(temp);
+				activeLine++;
 			}
-			activeLine++;
 		}
 		cout << "There are " << variableArray.size() << " variables" << endl;
 		for(int i = 0 ; i < variableArray.size() ; i++){
@@ -110,7 +110,7 @@ void Assembler::intToBinary(string variableName, int number){
 	}
 	// cout << binaryLine << endl;
 
-	// copy the binary number into the active line
+	// copy the binary value into the active line
 	for(int i = 0 ; i < 32 ; i++){
 		binaryArray[activeLine][i] = binaryLine[i];
 	}
@@ -131,6 +131,7 @@ void Assembler::readCommand(string machineCode){
 	string operand;
 	string variableName;
 	string binaryLine = "00000000000000000000000000000000";
+	bool found;
 
 	if (machineCode.find("VAR") != string::npos){
 
@@ -156,6 +157,7 @@ void Assembler::readCommand(string machineCode){
 		for (int i = 0 ; i < variableArray.size() ; i++){
 			if(variableArray.at(i).name == variableName){
 				variableArray.at(i).definedOnLine = activeLine;
+				cout << variableName << " is defined on line " << activeLine << endl;
 				break;
 			}
 		}
@@ -172,15 +174,17 @@ void Assembler::readCommand(string machineCode){
 		for (int i = 0 ; i < variableArray.size() ; i++){
 			if(variableArray.at(i).name == variableName){
 				variableArray.at(i).usedInLine.push_back(activeLine);
+				found = true;
 				break;
 			}
-			if(i == variableArray.size()-1){
-				variable temp;
-				temp.name = variableName;
-				temp.usedInLine.push_back(activeLine);
-				variableArray.push_back(temp);
-			}
 		}
+		if(found == false){
+			variable temp;
+			temp.name = variableName;
+			temp.usedInLine.push_back(activeLine);
+			variableArray.push_back(temp);
+		}
+		
 		// TODO correct value of binary line.
 		binaryLine = "00000000001000000000000000000000";
 
@@ -197,15 +201,17 @@ void Assembler::readCommand(string machineCode){
 		for (int i = 0 ; i < variableArray.size() ; i++){
 			if(variableArray.at(i).name == variableName){
 				variableArray.at(i).usedInLine.push_back(activeLine);
+				found = true;
 				break;
 			}
-			if(i == variableArray.size()-1){
-				variable temp;
-				temp.name = variableName;
-				temp.usedInLine.push_back(activeLine);
-				variableArray.push_back(temp);
-			}
 		}
+		if(found == false){
+			variable temp;
+			temp.name = variableName;
+			temp.usedInLine.push_back(activeLine);
+			variableArray.push_back(temp);
+		}
+		
 		// TODO correct value of binary line.
 		binaryLine = "00000000001000000000000000000000";
 	}
@@ -221,15 +227,17 @@ void Assembler::readCommand(string machineCode){
 		for (int i = 0 ; i < variableArray.size() ; i++){
 			if(variableArray.at(i).name == variableName){
 				variableArray.at(i).usedInLine.push_back(activeLine);
+				found = true;
 				break;
 			}
-			if(i == variableArray.size()-1){
-				variable temp;
-				temp.name = variableName;
-				temp.usedInLine.push_back(activeLine);
-				variableArray.push_back(temp);
-			}
 		}
+		if(found == false){
+			variable temp;
+			temp.name = variableName;
+			temp.usedInLine.push_back(activeLine);
+			variableArray.push_back(temp);
+		}
+		
 		// TODO correct value of binary line.
 		binaryLine = "00000000001000000000000000000000";
 	}
@@ -237,23 +245,7 @@ void Assembler::readCommand(string machineCode){
 		operand = "111";
 		machineCode.erase(0,machineCode.find("STP"));
 		cout << machineCode << endl;
-		position = 4;
-		while (machineCode[position] != ' '){
-			variableName += machineCode[position];
-			position++;
-		}
-		for (int i = 0 ; i < variableArray.size() ; i++){
-			if(variableArray.at(i).name == variableName){
-				variableArray.at(i).usedInLine.push_back(activeLine);
-				break;
-			}
-			if(i == variableArray.size()-1){
-				variable temp;
-				temp.name = variableName;
-				temp.usedInLine.push_back(activeLine);
-				variableArray.push_back(temp);
-			}
-		}
+		
 		// TODO correct value of binary line.
 		binaryLine = "00000000001000000000000000000000";
 	}
@@ -269,15 +261,17 @@ void Assembler::readCommand(string machineCode){
 		for (int i = 0 ; i < variableArray.size() ; i++){
 			if(variableArray.at(i).name == variableName){
 				variableArray.at(i).usedInLine.push_back(activeLine);
+				found = true;
 				break;
 			}
-			if(i == variableArray.size()-1){
-				variable temp;
-				temp.name = variableName;
-				temp.usedInLine.push_back(activeLine);
-				variableArray.push_back(temp);
-			}
 		}
+		if(found == false){
+			variable temp;
+			temp.name = variableName;
+			temp.usedInLine.push_back(activeLine);
+			variableArray.push_back(temp);
+		}
+		
 		// TODO correct value of binary line.
 		binaryLine = "00000000001000000000000000000000";
 	}
@@ -293,15 +287,17 @@ void Assembler::readCommand(string machineCode){
 		for (int i = 0 ; i < variableArray.size() ; i++){
 			if(variableArray.at(i).name == variableName){
 				variableArray.at(i).usedInLine.push_back(activeLine);
+				found = true;
 				break;
 			}
-			if(i == variableArray.size()-1){
-				variable temp;
-				temp.name = variableName;
-				temp.usedInLine.push_back(activeLine);
-				variableArray.push_back(temp);
-			}
 		}
+		if(found == false){
+			variable temp;
+			temp.name = variableName;
+			temp.usedInLine.push_back(activeLine);
+			variableArray.push_back(temp);
+		}
+		
 		// TODO correct value of binary line.
 		binaryLine = "00000000001000000000000000000000";
 	}
@@ -317,22 +313,28 @@ void Assembler::readCommand(string machineCode){
 		for (int i = 0 ; i < variableArray.size() ; i++){
 			if(variableArray.at(i).name == variableName){
 				variableArray.at(i).usedInLine.push_back(activeLine);
+				found = true;
 				break;
 			}
-			if(i == variableArray.size()-1){
-				variable temp;
-				temp.name = variableName;
-				temp.usedInLine.push_back(activeLine);
-				variableArray.push_back(temp);
-			}
 		}
+		if(found == false){
+			variable temp;
+			temp.name = variableName;
+			temp.usedInLine.push_back(activeLine);
+			variableArray.push_back(temp);
+		}
+		
 		// TODO correct value of binary line.
 		binaryLine = "00000000001000000000000000000000";
 	}
 	else{
+		cout << "Unrecognised command found on line: " << activeLine << endl;
 		return;
 	}
-	
+	// copy the binary value into the active line
+	for(int i = 0 ; i < 32 ; i++){
+		binaryArray[activeLine][i] = binaryLine[i];
+	}
 }
 
 #endif
