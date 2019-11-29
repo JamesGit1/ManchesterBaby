@@ -16,7 +16,7 @@ class Assembler {
     void readfile();
 	void readCommand(string);
 	int activeLine;
-	char binaryArray[32][32];
+	char binaryArray[8191][32];
 	void intToBinary(string, int);
 	struct variable{
 		string name;
@@ -68,7 +68,7 @@ void Assembler::readfile(){
 		// get the lines of text from the file
 		while(getline(file, temp)){
 			// remove the commenting
-            for(int i = 0 ; i < temp.size() ; i++){
+            for(unsigned i = 0 ; i < temp.size() ; i++){
                 if (temp[i] == ';'){
 					if (i==0){
 						temp.clear();
@@ -103,7 +103,6 @@ void Assembler::readfile(){
 
 void Assembler::intToBinary(string variableName, int number){
 	string binaryLine = "00000000000000000000000000000000";
-	int remainder;
 	// to find the operand, we first find the command, then add 4
 	// to find the first number in the operand
 	for (int i = 31 ; i >= 0 ; i--){
@@ -122,7 +121,7 @@ void Assembler::intToBinary(string variableName, int number){
 	}
 
 	// find the variable and add the value to it
-	for (int i = 0 ; i < variableArray.size() ; i++){
+	for (unsigned i = 0 ; i < variableArray.size() ; i++){
 		if(variableArray.at(i).name == variableName){
 			variableArray.at(i).value = binaryLine;
 			break;
@@ -143,7 +142,7 @@ void Assembler::readCommand(string machineCode){
 	string operandBoth[2][8] = 
 	{
 		{"LDN", "STO", "JRP", "STP", "SUB", "CMP", "JMP", "VAR"},
-		{"010", "100", "111", "001", "011", "000", "110", ""}
+		{"010", "110", "100", "111", "001", "011", "000", ""}
 	};
 	int loopResult;
 
@@ -157,15 +156,14 @@ void Assembler::readCommand(string machineCode){
 			return;
 		}
 	}
-	machineCode.erase(0,machineCode.find(operandBoth[0][loopResult]));
 	if(operandBoth[0][loopResult] == operandBoth[0][7]){
 		while(machineCode[position] != ':' && machineCode[position] != ' '){
 			variableName += machineCode[position];
 			position++;
 		}
 
-		// variableArray.at(numberOfVariables).definedOnLine = activeLine;
-		//machineCode.erase(0,machineCode.find(operandList[loopResult]));
+		machineCode.erase(0,machineCode.find(operandBoth[0][loopResult]));
+
 		position = 4;
 
 		cout << machineCode << endl;
@@ -179,7 +177,7 @@ void Assembler::readCommand(string machineCode){
 		int number = stoi(stringNumber);
 		intToBinary(variableName, number);
 
-		for (int i = 0 ; i < variableArray.size() ; i++){
+		for (unsigned i = 0 ; i < variableArray.size() ; i++){
 			if(variableArray.at(i).name == variableName){
 				variableArray.at(i).definedOnLine = activeLine;
 				break;
@@ -188,7 +186,8 @@ void Assembler::readCommand(string machineCode){
 		return;
 	} else{
 		operand=operandBoth[1][loopResult];
-		//machineCode.erase(0,machineCode.find(operandList[loopResult]));
+		machineCode.erase(0,machineCode.find(operandBoth[0][loopResult]));
+
 	}
 
 	cout << machineCode << endl;
@@ -198,7 +197,7 @@ void Assembler::readCommand(string machineCode){
 			variableName += machineCode[position];
 			position++;
 		}
-		for (int i = 0 ; i < variableArray.size() ; i++){
+		for (unsigned i = 0 ; i < variableArray.size() ; i++){
 			if(variableArray.at(i).name == variableName){
 				variableArray.at(i).usedInLine.push_back(activeLine);
 				found = true;
@@ -214,8 +213,8 @@ void Assembler::readCommand(string machineCode){
 	}
 	// copy the binary value into the active line
 	for(int i = 0 ; i < 32 ; i++){
-		if (i == 7 || i == 8 || i == 9){
-			binaryArray[activeLine][i] = operand[(i-7)];
+		if (i == 13 || i == 14 || i == 15){
+			binaryArray[activeLine][i] = operand[(i-13)];
 		} 
 		else{
 			binaryArray[activeLine][i] = '0';
@@ -224,11 +223,11 @@ void Assembler::readCommand(string machineCode){
 }
 
 void Assembler::placeValues(){
-	for(int i = 0 ; i < variableArray.size() ; i++){
-		for (int c = 0 ; c < variableArray.at(i).usedInLine.size() ; c++){
+	for(unsigned i = 0 ; i < variableArray.size() ; i++){
+		for (unsigned c = 0 ; c < variableArray.at(i).usedInLine.size() ; c++){
 			// change the "definedOnLine variable to binary"
 			int number = variableArray.at(i).definedOnLine;
-			for (int v = 5 ; v >= 0 ; v--){
+			for (int v = 12 ; v >= 0 ; v--){
 				if (number >= pow(2,v)){
 					binaryArray[variableArray.at(i).usedInLine.at(c)][v] = '1';
 					number -= pow(2,v);
@@ -246,7 +245,7 @@ void Assembler::printBinary(){
 	ofstream myfile ("binary.txt");
 	if (myfile.is_open())
 	{
-		for(int i = 0 ; i < 32 ; i++){
+		for(int i = 0 ; i < totalNoOfLines ; i++){
 			// This might have to change
 			for (int c = 0 ; c < 32 ; c++){
 				myfile << binaryArray[i][c];
