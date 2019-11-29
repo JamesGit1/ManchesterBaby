@@ -149,8 +149,9 @@ void Assembler::readCommand(string machineCode){
 
 		// variableArray.at(numberOfVariables).definedOnLine = activeLine;
 		machineCode.erase(0,machineCode.find("VAR"));
-		cout << machineCode << endl;
 		position = 4;
+
+		cout << machineCode << endl;
 
 		while (machineCode[position] != ' '){
 			stringNumber += machineCode[position];
@@ -167,26 +168,40 @@ void Assembler::readCommand(string machineCode){
 				break;
 			}
 		}
+		return;
 	}
 	else if(machineCode.find("LDN") != string::npos){
 		operand = "010";
+		machineCode.erase(0,machineCode.find("LDN"));
 	}
 	else if(machineCode.find("JRP") != string::npos){
 		operand = "100";
+		machineCode.erase(0,machineCode.find("JRP"));
 	}
 	else if(machineCode.find("STP") != string::npos){
 		operand = "111";
+		machineCode.erase(0,machineCode.find("STP"));
 	}
 	else if(machineCode.find("SUB") != string::npos){
 		operand = "001";
+		machineCode.erase(0,machineCode.find("SUB"));
 	}
 	else if(machineCode.find("CMP") != string::npos){
 		operand = "011";
+		machineCode.erase(0,machineCode.find("CMP"));
 	}
 	else if(machineCode.find("JMP") != string::npos){
 		operand = "000";
+		machineCode.erase(0,machineCode.find("JMP"));
 	}
-	machineCode.erase(0,machineCode.find(operand));
+	else if(machineCode.find("STO") != string::npos){
+		operand = "110";
+		machineCode.erase(0,machineCode.find("STO"));
+	}
+	else{
+		cout << "Unrecognised command found on line: " << activeLine << endl;
+		return;
+	}
 	cout << machineCode << endl;
 	if(operand != "111"){
 		position = 4;
@@ -207,14 +222,7 @@ void Assembler::readCommand(string machineCode){
 			temp.usedInLine.push_back(activeLine);
 			variableArray.push_back(temp);
 		}
-		else{
-			cout << "Unrecognised command found on line: " << activeLine << endl;
-			return;
-		}
 	}
-}
-	
-
 	// copy the binary value into the active line
 	for(int i = 0 ; i < 32 ; i++){
 		if (i == 7,8,9){
