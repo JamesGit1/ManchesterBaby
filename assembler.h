@@ -30,7 +30,20 @@ class Assembler {
 	int startLine;
 	int endLine;
 	void placeValues();
+	void printBinary();
+	// void initialiseBinaryArray();
 };
+
+/*
+void Assembler::initialiseBinaryArray(){
+	for(int i = 0 ; i < 32 ; i++){
+		// This might have to change
+		for (int c = 0 ; c < 32 ; c++){
+			binaryArray[i][c] = '0';
+		}
+	}
+}
+*/
 
 void Assembler::readfile(){
 	activeLine = 0;
@@ -39,6 +52,7 @@ void Assembler::readfile(){
     ifstream file;
 	string temp;
 	int restOfLine;
+	// initialiseBinaryArray();
 	try{
 		// open the file
 		file.open(filename);
@@ -82,10 +96,8 @@ void Assembler::readfile(){
 				activeLine++;
 			}
 		}
-		for(int i = 0 ; i < variableArray.size() ; i++){
-			for (int c = 0 ; c < variableArray.at(i).usedInLine.size() ; c++){
-			}
-		}
+		placeValues();
+		printBinary();
 	}
 	// close the file
 	file.close();
@@ -126,7 +138,6 @@ void Assembler::readCommand(string machineCode){
 	int position = 0;
 	string operand;
 	string variableName;
-	string binaryLine = "00000000000000000000000000000000";
 	bool found;
 
 	if (machineCode.find("VAR") != string::npos){
@@ -179,10 +190,6 @@ void Assembler::readCommand(string machineCode){
 			temp.usedInLine.push_back(activeLine);
 			variableArray.push_back(temp);
 		}
-		
-		// TODO correct value of binary line.
-		binaryLine = "00000000001000000000000000000000";
-
 	}
 	else if(machineCode.find("STO") != string::npos){
 		operand = "110";
@@ -206,9 +213,6 @@ void Assembler::readCommand(string machineCode){
 			temp.usedInLine.push_back(activeLine);
 			variableArray.push_back(temp);
 		}
-		
-		// TODO correct value of binary line.
-		binaryLine = "00000000001000000000000000000000";
 	}
 	else if(machineCode.find("JRP") != string::npos){
 		operand = "100";
@@ -232,17 +236,11 @@ void Assembler::readCommand(string machineCode){
 			temp.usedInLine.push_back(activeLine);
 			variableArray.push_back(temp);
 		}
-		
-		// TODO correct value of binary line.
-		binaryLine = "00000000001000000000000000000000";
 	}
 	else if(machineCode.find("STP") != string::npos){
 		operand = "111";
 		machineCode.erase(0,machineCode.find("STP"));
 		cout << machineCode << endl;
-		
-		// TODO correct value of binary line.
-		binaryLine = "00000000001000000000000000000000";
 	}
 	else if(machineCode.find("SUB") != string::npos){
 		operand = "001";
@@ -266,9 +264,6 @@ void Assembler::readCommand(string machineCode){
 			temp.usedInLine.push_back(activeLine);
 			variableArray.push_back(temp);
 		}
-		
-		// TODO correct value of binary line.
-		binaryLine = "00000000001000000000000000000000";
 	}
 	else if(machineCode.find("CMP") != string::npos){
 		operand = "011";
@@ -292,9 +287,6 @@ void Assembler::readCommand(string machineCode){
 			temp.usedInLine.push_back(activeLine);
 			variableArray.push_back(temp);
 		}
-		
-		// TODO correct value of binary line.
-		binaryLine = "00000000001000000000000000000000";
 	}
 	else if(machineCode.find("JMP") != string::npos){
 		operand = "000";
@@ -318,24 +310,49 @@ void Assembler::readCommand(string machineCode){
 			temp.usedInLine.push_back(activeLine);
 			variableArray.push_back(temp);
 		}
-		
-		// TODO correct value of binary line.
-		binaryLine = "00000000001000000000000000000000";
 	}
 	else{
 		cout << "Unrecognised command found on line: " << activeLine << endl;
 		return;
 	}
+
 	// copy the binary value into the active line
-	/*
 	for(int i = 0 ; i < 32 ; i++){
-		binaryArray[activeLine][i] = binaryLine[i];
+		if (i == 7,8,9){
+			binaryArray[activeLine][i] = operand[i-5];
+		}
+		else{
+			binaryArray[activeLine][i] = '0';
+		}
 	}
-	*/
 }
 
 void Assembler::placeValues(){
+	for(int i = 0 ; i < variableArray.size() ; i++){
+		for (int c = 0 ; c < variableArray.at(i).usedInLine.size() ; c++){
+			// change the "definedOnLine variable to binary"
+			int number = variableArray.at(i).definedOnLine;
+			for (int v = 5 ; v >= 0 ; v--){
+				if (number >= pow(2,v)){
+					binaryArray[variableArray.at(i).usedInLine.at(c)][v] = '1';
+					number -= pow(2,v);
+				}
+				else{
+					binaryArray[variableArray.at(i).usedInLine.at(c)][v] = '0';
+				}
+			}
+		}
+	}
+}
 
+void Assembler::printBinary(){
+	for(int i = 0 ; i < 32 ; i++){
+		// This might have to change
+		for (int c = 0 ; c < 32 ; c++){
+			cout << binaryArray[i][c];
+		}
+		cout << endl;
+	}
 }
 
 #endif
